@@ -54,13 +54,14 @@ def handle_click(self):
     for file in os.listdir('fichier'):
         os.remove('fichier/' + file)
     os.rmdir('fichier')
-    
+
     os.remove('key.key')
     os.remove('temp_server_file.zip')
-
+    os.remove('encrypted_folder.zip')
 
     ftp.quit()
 
+# ui lanceant le programme
 class MonApplication(App):
     def build(self):
         bouton = Button(text='Encypter le fichier zip')
