@@ -4,10 +4,14 @@ from ftplib import FTP
 
 
 def telecharger_fichier(self):
+    # connexion au serveur ftp
     ftp = FTP('127.0.0.1' )  
     ftp.login("user", "pass")
-    ftp.cwd('/files')
-    ftp.retrbinary('RETR nom_du_fichier.txt', contenu_du_fichier)
+    ftp.cwd('/')
+    # copie temporaire du zip sur le serveur ftp 
+    ftp.cwd("/")
+    with open("temp_server_file.zip", "wb") as file:
+        ftp.retrbinary("RETR fichier.zip", file.write)
     ftp.quit()
 
 class MonApplication(App):
