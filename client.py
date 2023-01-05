@@ -2,21 +2,8 @@ from kivy.app import App
 from kivy.uix.button import Button
 from ftplib import FTP
 from zipfile import ZipFile
-
-# connexion au serveur ftp
-# ftp = FTP('127.0.0.1' )  
-# ftp.login("user", "pass")
-# ftp.cwd('/')
-
-# def telecharger_fichier(self):
-#     # copie temporaire du zip sur le serveur ftp 
-#     with open("temp_server_file.zip", "wb") as file:
-#         ftp.retrbinary("RETR fichier.zip", file.write)
-
-# def deziper_fichier(): 
-#     # dezip le fichier temporaire recupere sur le serveur
-#     with ZipFile("temp_server_file.zip", 'r') as zip_content:
-#         file_list = zip_content.extractall()
+import os
+from cryptography.fernet import Fernet
 
 def handle_click(self):
     # connexion au serveur ftp
@@ -24,7 +11,7 @@ def handle_click(self):
     ftp.login("user", "pass")
     ftp.cwd('/')
 
-    # copie temporaire du zip sur le serveur ftp 
+    # copie temporaire du zip sur le serveur ftp  (temp_server_file.zip)
     with open("temp_server_file.zip", "wb") as file:
         ftp.retrbinary("RETR fichier.zip", file.write)
     
@@ -32,11 +19,33 @@ def handle_click(self):
     with ZipFile("temp_server_file.zip", 'r') as zip_content:
         file_list = zip_content.extractall()
     
+    # genere une cle et la stock dans le fichier key.key
+    key = Fernet.generate_key()
+    with open("key.key", "wb") as key_file:
+        key_file.write(key)
+    fernet = Fernet(key)
+
+    os.mkdir("encrypted") # ceation du dossier hebergeant les fichier enctyptes
+
+    # encrypte le contenu de tout le dossier /fichier
+    for file in os.listdir('fichier'):
+        with open('fichier/' + file, "rb") as f:
+            file_data = f.read() # recupere le contenu
+            encrypted_data = fernet.encrypt(file_data) # enctypte le contenu
+            with open('encrypted/' + file, "wb") as f:
+                f.write(encrypted_data) # reecrit le contenu
+
+    # zip le dossier encrypte
+
+    # renvoie au serveur ftp le zip enctypte
+
+    #supprime toutes les donnees temporaires
+
     ftp.quit()
 
 class MonApplication(App):
     def build(self):
-        bouton = Button(text='Recupere le fichier, l encypter et le renvoyer')
+        bouton = Button(text='Encypter le fichier zip')
         bouton.bind(on_release=handle_click)
         return bouton
 
