@@ -48,8 +48,13 @@ def handle_click(self):
 
     # supprime toutes les donnees temporaires
     for file in os.listdir('encrypted'):
-        os.remove(file)
+        os.remove('encrypted/' + file)
+    os.rmdir('encrypted')
+
+    for file in os.listdir('fichier'):
+        os.remove('fichier/' + file)
     os.rmdir('fichier')
+    
     os.remove('key.key')
     os.remove('temp_server_file.zip')
 
