@@ -9,7 +9,7 @@ def handle_click(self):
     # connexion au serveur ftp
     ftp = FTP('127.0.0.1' )  
     ftp.login("user", "pass")
-    ftp.cwd('/')
+    ftp.cwd('/server')
 
     # copie temporaire du zip sur le serveur ftp  (temp_server_file.zip)
     with open("temp_server_file.zip", "wb") as file:
@@ -36,10 +36,22 @@ def handle_click(self):
                 f.write(encrypted_data) # reecrit le contenu
 
     # zip le dossier encrypte
+    zip = ZipFile('encrypted_folder.zip', 'w')
+    for root, dirs, files in os.walk("encrypted"):
+        for file in files:  
+            zip.write(os.path.join(root, file))
+    zip.close()
 
     # renvoie au serveur ftp le zip enctypte
+    with open('encrypted_folder.zip', 'rb') as fp:
+	    ftp.storbinary('STOR encrypted_data.zip', fp)
 
-    #supprime toutes les donnees temporaires
+    # supprime toutes les donnees temporaires
+    os.rmdir('encrypted')
+    os.rmdir('fichier')
+    os.remove('key.key')
+    os.remove('temp_server_file.zip')
+
 
     ftp.quit()
 

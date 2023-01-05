@@ -11,6 +11,6 @@ pip install cryptography
 ## lancer le projet
 
 ```
-python server.py
-python client.py
+python server/server.py
+python client/client.py
 ```
